@@ -18,7 +18,6 @@ int main(int argc, char** argv) {
   int fileChoice  = 1;
   string filelocation = "";
 
-
   cout << "Welcome to Jon Conway's Game of life!\nPlease enter:\n (1) to start with random configuration\n (2) to specify a flatfile configuration.\n";
   cin >> fileChoice;
   if (cin.fail()) {
@@ -28,8 +27,7 @@ int main(int argc, char** argv) {
     exit(1);
   }
   if (fileChoice == 1) {
-    //ask for grid size, dimensions, and decimal number
-    //run behavior frame by frame, pauses, or output to file
+
     //GameOfLife(); //generate new simulation
 
   }
@@ -51,9 +49,7 @@ int main(int argc, char** argv) {
       istream.close();
       //run behavior frame by frame, pauses, or output to file
       GameOfLife simulation1(filelocation);
-      //simulation1.run();
-      //delete[] simulation1;
-      //call a constructor GameOfLife simulation(initialCondition);
+      simulation1.run();
     }
     else {
       cout << "invalid input! Exiting..\n";

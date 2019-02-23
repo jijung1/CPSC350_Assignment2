@@ -6,7 +6,7 @@ Course no. & Section:   CS350-02
 Assignment:             2
 */
 
-//there will also be two child classes GameOfLife_Mirror and GameOfLife_Torus
+//there will also be two child classes GameOfLife_Mirror and GameOfLife_Doughnut
 /*
   Class invariant:
 */
@@ -24,12 +24,12 @@ Assignment:             2
 
 using namespace std;
 
-const unsigned int DELAY = 2000000;
+const unsigned int DELAY = 100000;
 
 class GameOfLife {
 public:
   GameOfLife(string filelocation);  //read file from constructor.
-  //GameOfLife(); //generate new simulation prompt user for desired world specs
+  GameOfLife(); //generate new simulation prompt user for desired world specs
 
   void run(); //3 options: output to file, frame by frame, pause between frames output generation number each frame
 
@@ -48,7 +48,6 @@ private:
   int row;
   int column;
   char** currentGen; //start with currentGen, read its info and use that to populate each cell in modified Gen.
-  char** tempGen; //we need to compare modifiedGen with tempGen to see if world has stabilized
   char** modifiedGen;
   int runOption; //frame, pause, or output to file
 };
