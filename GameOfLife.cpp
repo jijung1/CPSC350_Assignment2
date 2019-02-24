@@ -237,6 +237,28 @@ void GameOfLife::checkNeighbors() {  //modifiedGen is determined here.
   }
 }
 
+void GameOfLife::checkNeighborsDoughnut() {
+  int neighbors = 0;
+  for (int i = 0; i < this->row; ++i) {
+    for (int j = 0; j < this->column; ++j) {
+      neighbors = 0;
+        for (int m = i-1; m <= i+1; ++m) {
+          for (int n = j-1; n <= j+1; ++n) {
+            if (m == i && n == j) {
+            }
+            else if (currentGen[(m + this->row)%this->row][(n + this->column)%this->column] == 'X') {
+              neighbors++;
+            }
+          }
+        }
+        this->setCell(i, j, neighbors);
+        //cout << "modifiedGen [" << i << "][" << j << "]: " << modifiedGen[i][j] << endl;
+      }
+    }
+  }
+
+
+
 void GameOfLife::printCurrentGen() {
   for (int j = 0; j < this->row; ++j) {
     for (int k = 0; k < this->column; ++k) {
@@ -252,7 +274,8 @@ void GameOfLife::run() {    //where the magic happens. hardest part... that's wh
   cout << string(45, '\n'); //makes for a less stuttery display than system("clear");
   cout << "Generation: " << count++ << endl;
   this->printCurrentGen();
-  this->checkNeighbors(); //generate modified generation
+  //this->checkNeighbors(); //generate modified generation
+  this->checkNeighborsDoughnut();
   switch (runOption) {
     case 1:   //short pauses between generations.
       while(!simulationOver()) {
@@ -266,7 +289,8 @@ void GameOfLife::run() {    //where the magic happens. hardest part... that's wh
         cout << string(45, '\n');
         cout << "Generation: " << count++ << endl;
         this->printCurrentGen();
-        this->checkNeighbors();
+        //this->checkNeighbors();
+        this->checkNeighborsDoughnut();
       }
       break;
     case 2:   //press enter for next frame
@@ -278,10 +302,13 @@ void GameOfLife::run() {    //where the magic happens. hardest part... that's wh
           }
         }
         // cout << string(45, '\n');
-        system("clear");
+        //system("clear");
+        cout << string(55, '\n');
+
         cout << "Generation: " << count++ << endl;
         this->printCurrentGen();
-        this->checkNeighbors();
+      //  this->checkNeighbors();
+        this->checkNeighborsDoughnut();
       }
 
       break;

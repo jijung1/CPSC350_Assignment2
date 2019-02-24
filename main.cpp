@@ -50,6 +50,7 @@ int main(int argc, char** argv) {
       //run behavior frame by frame, pauses, or output to file
       GameOfLife simulation1(filelocation);
       simulation1.run();
+
     }
     else {
       cout << "invalid input! Exiting..\n";
