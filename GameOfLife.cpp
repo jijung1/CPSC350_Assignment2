@@ -12,20 +12,18 @@ Assignment:             2
 
 #include "GameOfLife.h"
 
-GameOfLife::GameOfLife(string filelocation) {
+GameOfLife::GameOfLife(string filelocation, int mode) {
   string row = "";
   string column = "";
-
   ifstream istream(filelocation);
-
   getline(istream, row);
   getline(istream, column);
+  this->mode = mode;
   this->row = stoi(row);
   this->column = stoi(column);
   cout << "row: " << this->row << "\ncolumn: "<< this->column<< endl;
   this->currentGen = new char*[this->row];
   this->modifiedGen = new char* [this -> row]; //this will become currentGen if simulationOver() == false
-
   for (int i = 0; i < this->row; ++i) {   //dynamically allocate memory for 2-d array
     currentGen[i] = new char[this->column];
     modifiedGen[i] = new char[this->column];
@@ -40,21 +38,18 @@ GameOfLife::GameOfLife(string filelocation) {
     cout << endl;
   }
   istream.close();
-
   cout << "Please choose display option:\n(1) brief-pause between generations\n(2) press \"enter\" key to display next generation\n(3) output to text file\n";
   cin >> this->runOption; //only accept 1,2,3
 }
-
-GameOfLife::GameOfLife() {
+GameOfLife::GameOfLife(int mode) {
   //ask for grid size, dimensions, and decimal number
+  this->mode = mode;
   cout << "Please enter the number of rows: ";
   cin >> this->row;
   cout << "\nPlease enter the number of columns: ";
   cin >> this->column;
-
   //run behavior frame by frame, pauses, or output to file
 }
-
 bool GameOfLife::simulationOver() {
   bool unchanged = true;
   bool empty = true;
@@ -81,8 +76,7 @@ void GameOfLife::setCell(int row, int column, int neighbors) {
     modifiedGen[row][column] = 'X';
   }
 }
-
-void GameOfLife::checkNeighbors() {  //modifiedGen is determined here.
+void GameOfLife::checkNeighbors() {  //classic mode function to determine modifiedGene.
   int neighbors = 0;
   for (int i = 0; i < this->row; ++i) {
     for (int j = 0; j < this->column; ++j) {
@@ -98,7 +92,6 @@ void GameOfLife::checkNeighbors() {  //modifiedGen is determined here.
           neighbors++;
         }
         this->setCell(i, j, neighbors);
-        //cout << "modifiedGen [" << i << "][" << j << "]: " << modifiedGen[i][j] << endl;
       }
       if (i == 0 && j == this->column-1) {  //top right corner
           if (currentGen[i][j-1] == 'X') {
@@ -111,7 +104,6 @@ void GameOfLife::checkNeighbors() {  //modifiedGen is determined here.
             neighbors++;
           }
           this->setCell(i, j, neighbors);
-          //cout << "modifiedGen [" << i << "][" << j << "]: " << modifiedGen[i][j] << endl;
       }
       if (i == this->row-1 && j == 0) { //bottom left corner
         if (currentGen[i-1][j] == 'X') {
@@ -124,7 +116,6 @@ void GameOfLife::checkNeighbors() {  //modifiedGen is determined here.
           neighbors++;
         }
         this->setCell(i, j, neighbors);
-        //cout << "modifiedGen [" << i << "][" << j << "]: " << modifiedGen[i][j] << endl;
       }
       if (i == this->row-1 && j == this->column-1) {  //bottom right corner
         if (currentGen[i-1][j-1] == 'X') {
@@ -137,7 +128,6 @@ void GameOfLife::checkNeighbors() {  //modifiedGen is determined here.
           neighbors++;
         }
         this->setCell(i, j, neighbors);
-        //cout << "modifiedGen [" << i << "][" << j << "]: " << modifiedGen[i][j] << endl;
       }
       if (i == 0 && j != 0 && j != this->column-1) { //top edge
         if (currentGen[i][j-1] == 'X') {
@@ -156,7 +146,6 @@ void GameOfLife::checkNeighbors() {  //modifiedGen is determined here.
           neighbors++;
         }
         this->setCell(i, j, neighbors);
-        //cout << "modifiedGen [" << i << "][" << j << "]: " << modifiedGen[i][j] << endl;
       }
       if (i == this->row-1 && j != 0 && j != this->column-1) { //bottom edge
         if (currentGen[i][j-1] == 'X') {
@@ -175,7 +164,6 @@ void GameOfLife::checkNeighbors() {  //modifiedGen is determined here.
           neighbors++;
         }
         this->setCell(i, j, neighbors);
-        //cout << "modifiedGen [" << i << "][" << j << "]: " << modifiedGen[i][j] << endl;
       }
       if (i != 0 && i != this->row-1 && j == 0) { //left edge
         if (currentGen[i-1][j] == 'X') {
@@ -194,7 +182,6 @@ void GameOfLife::checkNeighbors() {  //modifiedGen is determined here.
           neighbors++;
         }
         this->setCell(i, j, neighbors);
-        //cout << "modifiedGen [" << i << "][" << j << "]: " << modifiedGen[i][j] << endl;
       }
       if (i != 0 && i != this->row-1 && j == this->column-1) { //right edge
         if (currentGen[i-1][j] == 'X') {
@@ -213,7 +200,6 @@ void GameOfLife::checkNeighbors() {  //modifiedGen is determined here.
           neighbors++;
         }
         this->setCell(i, j, neighbors);
-        //cout << "modifiedGen [" << i << "][" << j << "]: " << modifiedGen[i][j] << endl;
       }
       if (i != 0 && i != this->row-1 && j != 0 && j != this->column-1) { //middle
         for (int m = j-1; m <= j+1; ++m) {
@@ -231,7 +217,182 @@ void GameOfLife::checkNeighbors() {  //modifiedGen is determined here.
           neighbors++;
         }
         this->setCell(i, j, neighbors);
-        //cout << "modifiedGen [" << i << "][" << j << "]: " << modifiedGen[i][j] << endl;
+      }
+    }
+  }
+}
+/*
+void GameOfLife::checkNeighborsMirror() {     //simplified version
+  int neighbors = 0;
+  for (int i = 0; i < this -> row; ++i) {
+    for (int j = 0; j < this -> column; ++j) {
+      for (int m = i-1; m <= i+1; ++m) {
+        for (int n = j-1; n <= j+1; ++n) {
+          if (m == -1 || m == this -> row) { //horizontal edges
+
+          }
+          else if (n == -1 || n == this -> column) { //vertical edges
+
+          }
+
+          }
+        }
+      }
+    }
+  }
+}
+*/
+
+
+void GameOfLife::checkNeighborsMirror() {
+  int neighbors = 0;
+  for (int i = 0; i < this -> row; ++i) {
+    for (int j = 0; j < this -> column; ++j) {
+      neighbors = 0;
+      if (i == 0 && j == 0) {  //top left corner
+        if (currentGen[i][j] == 'X') {
+          neighbors += 3;
+        }
+        if (currentGen[i][j+1] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i+1][j] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i+1][j+1] == 'X') {
+          neighbors++;
+        }
+        this->setCell(i, j, neighbors);
+      }
+      if (i == 0 && j == this -> column-1) { //top right corner
+        if (currentGen[i][j] == 'X') {
+          neighbors += 3;
+        }
+        if (currentGen[i][j-1] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i+1][j] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i+1][j-1] == 'X') {
+          neighbors++;
+        }
+        this->setCell(i, j, neighbors);
+      }
+      if (i == this -> row-1 && j == 0) { //bottom left corner
+        if (currentGen[i][j] == 'X') {
+          neighbors += 3;
+        }
+        if (currentGen[i][j+1] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i-1][j] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i-1][j+1] == 'X') {
+          neighbors++;
+        }
+        this->setCell(i, j, neighbors);
+      }
+      if ( i == this -> row-1 && j == this -> column-1) { //bottom right corner
+        if (currentGen[i][j] == 'X') {
+          neighbors += 3;
+        }
+        if (currentGen[i][j-1] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i-1][j] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i-1][j-1] == 'X') {
+          neighbors++;
+        }
+        this->setCell(i, j, neighbors);
+      }
+      if (i == 0 && j != 0 && j != this->column-1) {   //top edge
+        if(currentGen[i][j-1] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i][j+1] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i][j] == 'X') {
+          neighbors += 1;
+        }
+        for (int m = j-1; m <= j+1; ++m) {
+          if (currentGen[i+1][m] == 'X') {
+            neighbors += 1;
+          }
+        }
+        this->setCell(i, j, neighbors);
+      }
+      if (i == this->row-1 && j != 0 && j != this->column-1) {   //bottom edge
+        if(currentGen[i][j-1] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i][j+1] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i][j] == 'X') {
+          neighbors += 1;
+        }
+        for (int m = j-1; m <= j+1; ++m) {
+          if (currentGen[i-1][m] == 'X') {
+            neighbors += 1;
+          }
+        }
+        this->setCell(i, j, neighbors);
+      }
+      if (i != 0 && i != this->row-1 && j == 0) {   //left edge
+        if(currentGen[i+1][j] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i-1][j] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i][j] == 'X') {
+          neighbors += 1;
+        }
+        for (int m = i-1; m <= i+1; ++m) {
+          if (currentGen[m][j+1] == 'X') {
+            neighbors += 1;
+          }
+        }
+        this->setCell(i, j, neighbors);
+      }
+      if (i != 0 && i != this->row-1 && j == this->column-1) {   //right edge
+        if(currentGen[i+1][j] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i-1][j] == 'X') {
+          neighbors += 2;
+        }
+        if (currentGen[i][j] == 'X') {
+          neighbors += 1;
+        }
+        for (int m = i-1; m <= i+1; ++m) {
+          if (currentGen[m][j-1] == 'X') {
+            neighbors += 1;
+          }
+        }
+        this->setCell(i, j, neighbors);
+      }
+      if (i != 0 && i != this->row-1 && j != 0 && j != this->column-1) { //middle
+        for (int m = j-1; m <= j+1; ++m) {
+          if (currentGen[i+1][m] == 'X') {
+            neighbors++;
+          }
+          if (currentGen[i-1][m] == 'X') {
+            neighbors++;
+          }
+        }
+        if (currentGen[i][j-1] == 'X') {
+          neighbors++;
+        }
+        if (currentGen[i][j+1] == 'X') {
+          neighbors++;
+        }
+        this->setCell(i, j, neighbors);
       }
     }
   }
@@ -242,23 +403,18 @@ void GameOfLife::checkNeighborsDoughnut() {
   for (int i = 0; i < this->row; ++i) {
     for (int j = 0; j < this->column; ++j) {
       neighbors = 0;
-        for (int m = i-1; m <= i+1; ++m) {
-          for (int n = j-1; n <= j+1; ++n) {
-            if (m == i && n == j) {
-            }
-            else if (currentGen[(m + this->row)%this->row][(n + this->column)%this->column] == 'X') {
-              neighbors++;
-            }
+      for (int m = i-1; m <= i+1; ++m) {
+        for (int n = j-1; n <= j+1; ++n) {
+          if (m == i && n == j) {}
+          else if (currentGen[(m + this->row)%this->row][(n + this->column)%this->column] == 'X') {
+            neighbors++;
           }
         }
-        this->setCell(i, j, neighbors);
-        //cout << "modifiedGen [" << i << "][" << j << "]: " << modifiedGen[i][j] << endl;
+      }
+      this->setCell(i, j, neighbors);
       }
     }
   }
-
-
-
 void GameOfLife::printCurrentGen() {
   for (int j = 0; j < this->row; ++j) {
     for (int k = 0; k < this->column; ++k) {
@@ -267,15 +423,20 @@ void GameOfLife::printCurrentGen() {
     cout << endl;
   }
 }
-
-
-void GameOfLife::run() {    //where the magic happens. hardest part... that's what she said. -michael scott
+void GameOfLife::run() {    //where the magic happens. the hardest part... that's what she said. -michael scott
   int count = 0;
-  cout << string(45, '\n'); //makes for a less stuttery display than system("clear");
+  cout << string(50, '\n');
   cout << "Generation: " << count++ << endl;
   this->printCurrentGen();
-  //this->checkNeighbors(); //generate modified generation
-  this->checkNeighborsDoughnut();
+  if (mode == 1) {
+    this->checkNeighbors();
+  }
+  else if (mode == 2) {
+    this->checkNeighborsMirror();
+  }
+  else if (mode == 3) {
+    this->checkNeighborsDoughnut();
+  }
   switch (runOption) {
     case 1:   //short pauses between generations.
       while(!simulationOver()) {
@@ -286,11 +447,18 @@ void GameOfLife::run() {    //where the magic happens. hardest part... that's wh
             currentGen[i][j] = modifiedGen[i][j];
           }
         }
-        cout << string(45, '\n');
+        cout << string(50, '\n');
         cout << "Generation: " << count++ << endl;
         this->printCurrentGen();
-        //this->checkNeighbors();
-        this->checkNeighborsDoughnut();
+        if (mode == 1) {
+          this->checkNeighbors();
+        }
+        else if (mode == 2) {
+          this->checkNeighborsMirror();
+        }
+        else if (mode == 3) {
+          this->checkNeighborsDoughnut();
+        }
       }
       break;
     case 2:   //press enter for next frame
@@ -301,16 +469,19 @@ void GameOfLife::run() {    //where the magic happens. hardest part... that's wh
             currentGen[i][j] = modifiedGen[i][j];
           }
         }
-        // cout << string(45, '\n');
-        //system("clear");
-        cout << string(55, '\n');
-
+        cout << string(50, '\n');
         cout << "Generation: " << count++ << endl;
         this->printCurrentGen();
-      //  this->checkNeighbors();
-        this->checkNeighborsDoughnut();
+        if (mode == 1) {
+          this->checkNeighbors();
+        }
+        else if (mode == 2) {
+          this->checkNeighborsMirror();
+        }
+        else if (mode == 3) {
+          this->checkNeighborsDoughnut();
+        }
       }
-
       break;
     case 3:
       //code to output to text file
