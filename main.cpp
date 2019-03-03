@@ -13,13 +13,15 @@ Assignment:             2
 #include "GameOfLife.h"
 
 int main(int argc, char** argv) {
+  srand(time(NULL));
+
   int fileChoice  = 0;
   int mode = 0;
   string filelocation = "";
 
   cout << "Welcome to John Conway's Game of life!\nPlease enter:\n (1) to start with random configuration\n (2) to specify a flatfile configuration.\n";
   cin >> fileChoice;
-  if (cin.fail()) {
+  if (cin.fail() || (fileChoice != 1 && fileChoice != 2)) {
     cout << "Invalid input!\n";
     cin.clear();
     cin.ignore();
