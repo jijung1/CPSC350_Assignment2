@@ -7,10 +7,8 @@ Assignment:             2
 */
 
 /*
-  Driver file to test the functionality of DNAanalysiss class.
+  Driver file to test the functionality of GameOfLife program.
 */
-
-// To Do: create a GameOfLife readFile method so that all the code can get moved off main
 
 #include "GameOfLife.h"
 
@@ -35,10 +33,10 @@ int main(int argc, char** argv) {
     cin.ignore();
     exit(1);
   }
-  if (fileChoice == 1) {
+  if (fileChoice == 1) {  //new simulation
 
-    //GameOfLife(); //generate new simulation
-
+    GameOfLife simulation1(mode); //generate new simulation
+    simulation1.run();
   }
   else {  //run simulation from supplied file
     cout << "Please enter file location: ";
@@ -49,17 +47,16 @@ int main(int argc, char** argv) {
       cin.ignore();
       exit(1);
     }
-    if (filelocation.find(".txt") == -1)
+    if (filelocation.find(".txt") == -1)  //append extension if required
     {
       filelocation+=".txt";
     }
     ifstream istream(filelocation);
-    if(istream.is_open()) {    //check if file exists
+    if(istream.is_open()) {    //check that file exists
       istream.close();
       //run behavior frame by frame, pauses, or output to file
       GameOfLife simulation1(filelocation, mode);
       simulation1.run();
-
     }
     else {
       cout << "invalid input! Exiting..\n";

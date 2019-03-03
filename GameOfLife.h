@@ -16,21 +16,20 @@ Assignment:             2
 
 #include <iostream>
 #include <fstream>
-//#include <cstdlib> //for rand()
-//#include <cmath>
-//#include <ctime>
-#include <unistd.h>
+#include <cstdlib> //for rand()
+#include <unistd.h> //for usleep() pause function
 using namespace std;
 
-const unsigned int DELAY = 100000;
+const unsigned int DELAY = 120000;
+const int GENERATION_TO_TERMINATE_PROGRAM = 1000; //default termination point
+const int NUMBER_OF_OSCILLATIONS_BEFORE_TERMINATION = 5; //number of allowed repetitions of oscillating pattern
 
 class GameOfLife {
 public:
   GameOfLife(string filelocation, int mode);  //read file from constructor.
   GameOfLife(int mode); //generate new simulation prompt user for desired world specs
   void run(); //3 options: output to file, frame by frame, pause between frames output generation number each frame
-  void printCurrentGen();
-  //double popCell() //(RAND_MAX - rand()) / static_cast<double>(RAND_MAX) <= userSuppliedDecVal
+  string printCurrentGen();
   void checkNeighbors(); //iterate through every cell
   void checkNeighborsMirror();// mirror mode cell iteration
   void checkNeighborsDoughnut();
@@ -40,10 +39,12 @@ public:
 private:
   int row;
   int column;
+  char*** stabilityCheck;
   char** currentGen; //start with currentGen, read its info and use that to populate each cell in modified Gen.
   char** modifiedGen;
-  int runOption; //frame, pause, or output to file
+  int runOption; // 1= frame-by-frame, pause until enter, or output to file
   int mode; //1 = classic, 2 = mirror, 3 = doughnut
+  string outFileName;
 };
 
 #endif /*GAMEOFLIFE_H*/
